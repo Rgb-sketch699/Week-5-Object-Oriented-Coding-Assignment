@@ -1,0 +1,139 @@
+class CloneTrooper {
+    constructor(name, position){
+        this.name = name;
+        this.position = position;
+    }
+
+    describe(){
+        return `${this.name} specializes in ${this.position}.`;
+    }
+}
+
+class Squad {
+    constructor(name){
+        this.name = name;
+        this.cloneTroopers = [];
+    }
+
+    addCloneTrooper(cloneTrooper){
+        if(cloneTrooper instanceof CloneTrooper){
+            this.cloneTroopers.push(cloneTrooper);
+        } else {
+            throw new Error(`You can only add an instance of Clone Trooper. Argument is not a Clone Trooper.: ${cloneTrooper}`)
+        }
+    }
+
+    desctibe(){
+        return `${this.name} has ${this.cloneTroopers.length} Clone Troopers.`
+    }
+}
+
+class Menu {
+    constructor(){
+        this.squads = [];
+        this.selectedSquad = null;
+    }
+
+    start(){
+        let selection = this.showMainMenuOptions();
+
+        while(selection != 0){
+            switch (selection){
+                case '1': 
+                    this.createSquad();
+                    break;
+                case '2':
+                    this.viewSquad();
+                    break;
+                case '3':
+                    this.deleteSquad();
+                    break;
+                case '4':
+                    this.displaySquads();
+                    break;
+                default:
+                    selection = 0;
+            }
+            selection = this.showMainMenuOptions();
+        }
+
+        alert("Farewell Trooper.");
+    }
+
+    showMainMenuOptions(){
+        return prompt(`
+        0) Exit
+        1) Create New Squad
+        2) View Squad
+        3) Delete Squad
+        4) Display All Squads
+        `);
+    }
+
+    showSquadMenuOptions(squadInfo){
+        return prompt(`
+            0) Back
+            1) Create Clone Trooper
+            2) Delete Clone Trooper
+            --------------------------
+            ${squadInfo}
+        `);
+    }
+
+    displaySquads(){
+        let squadString = '';
+        for(let i = 0; i < this.squads.length; i++){
+            squadString += i + ') ' + this.squads[i].name + '\n';
+        }
+        alert(squadString);
+    }
+
+    createSquad(){
+        let name = prompt("Enter a name for you're new squad:");
+        this.squads.push(new Squad(name)); 
+    }
+
+    viewSquad(){
+        let index = prompt("Enter the index of the squad you wish to view:");
+        if(index > -1 && index < this.squads.length){
+            this.selectedSquad = this.squads[index];
+            let description = "Squad Name: " + this.selectedSquad.name + '\n';
+            
+            for(let i = 0; i < this.selectedSquad.cloneTroopers.length; i++){
+                description += i + ')' + this.selectedSquad.cloneTroopers[i].name + ' - ' + this.selectedSquad.cloneTroopers[i].positon + '\n';
+            }
+
+            let selection = this.showSquadMenuOptions(description);
+            switch (selection){
+                case '1':
+                    this.createCloneTrooper();
+                    break;
+                case '2':
+                    this.deleteCloneTrooper();
+            }
+        }
+    }
+
+    deleteSquad(){
+        let index = prompt("Enter the index of the squad you wish to delete:");
+        if(index > -1 && index < this.squads.length){
+            this.squads.splice(index, 1);
+        }
+    }
+
+    createCloneTrooper(){
+        let name = prompt("Enter the name for a new Clone Trooper:");
+        let position = prompt("Enter the position for a new Clone Trooper:");
+        this.selectedSquad.cloneTroopers.push(new CloneTrooper(name, position));
+    }
+
+    deleteCloneTrooper(){
+        let index = prompt("Enter the index of the Clone Trooper you wish to delete:");
+        if(index > -1 && index < this.selectedSquad.cloneTroopers.length){
+            this.selectedSquad.cloneTroopers.splice(index, 1);
+        }
+    }
+}
+
+let menu = new Menu();
+menu.start();
